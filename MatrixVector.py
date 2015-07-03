@@ -77,6 +77,9 @@ class Vector(object):
 
 ##############################################################
 
+class MatrixError(Exception):
+    pass
+
 class Matrix(object):
     def __init__(self, vectorlist):
         self._matrix = vectorlist
@@ -85,6 +88,9 @@ class Matrix(object):
     def fromSize(cls, row, col):
         _matrix = [Vector.fromLen(col)] * row
         return cls(_matrix)
+
+    def isSquare(self):
+        return self.getRowLen() == self.getColLen()
 
     def getRowLen(self):
         return len(self._matrix)
@@ -97,6 +103,34 @@ class Matrix(object):
    
     def transpose(self):
         return Matrix([Vector(list(item)) for item in zip(*self._matrix)])
+
+    def opp(self):##############
+        return Matrix()
+
+    def __add__(self, rhsmat):
+        if (self.getSize() != rhsmat.getSize()):
+            raise MatrixError, "wiseOp on different size matrixs"
+        return Matrix(map(lambda l, r: l + r, self._matrix, rhsmat._matrix))
+
+    def __sub__(self, rhsmat):
+        if (self.getSize() != rhsmat.getSize()):
+            raise MatrixError, "wiseOp on different size matrixs"
+        return Matrix(map(lambda l, r: l - r, self._matrix, rhsmat._matrix))
+
+    def __mul__(self, rhsmat):
+        if (self.getSize() != rhsmat.getSize()):
+            raise MatrixError, "wiseOp on different size matrixs"
+        return Matrix(map(lambda l, r: l * r, self._matrix, rhsmat._matrix))
+
+    def __div__(self, rhsmat):
+        if (self.getSize() != rhsmat.getSize()):
+            raise MatrixError, "wiseOp on different size matrixs"
+        return Matrix(map(lambda l, r: l / r, self._matrix, rhsmat._matrix))
+
+    def __pow__(self, rhsmat):
+        if (self.getSize() != rhsmat.getSize()):
+            raise MatrixError, "wiseOp on different size matrixs"
+        return Matrix(map(lambda l, r: l ** r, self._matrix, rhsmat._matrix))
 
     def __str__(self):
         return "[" + '\n'.join(str(row) for row in self._matrix) + "]"
@@ -130,3 +164,4 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]))
     print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose() -->")
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose())
+    print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) + Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]))
