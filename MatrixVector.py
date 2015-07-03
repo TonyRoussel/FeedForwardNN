@@ -75,32 +75,58 @@ class Vector(object):
     def __setitem__(self, idx, value):
         self._vector[idx] = value
 
-
+##############################################################
 
 class Matrix(object):
-    def __init__(self, row, col):
-        self._matrix = [Vector.fromLen(col)] * row
+    def __init__(self, vectorlist):
+        self._matrix = vectorlist
+
+    @classmethod
+    def fromSize(cls, row, col):
+        _matrix = [Vector.fromLen(col)] * row
+        return cls(_matrix)
+
+    def getRowLen(self):
+        return len(self._matrix)
+
+    def getColLen(self):
+        return self._matrix[0].len()
+
+    def getSize(self):
+        return (self.getRowLen(), self.getColLen())
+   
+    def transpose(self):
+        return Matrix([Vector(list(item)) for item in zip(*self._matrix)])
 
     def __str__(self):
         return "[" + '\n'.join(str(row) for row in self._matrix) + "]"
+
+    def __getitem__(self, idx):
+        return self._matrix[idx]
+
+    def __setitem__(self, idx, value):
+        self._matrix[idx] = value
 
 
 
 
 # Test
 if (__name__ == "__main__"):
-    print (Matrix(2, 3))
-    print ("Vector([1, 2, 3, 4]) --> ")
+    print ("Vector([1, 2, 3, 4]) -->")
     print (Vector([1, 2, 3, 4]))
-    print ("Vector([1, 2, 3, 4]) + Vector([1, 2, 3, 4]).opp() --> ")
+    print ("Vector([1, 2, 3, 4]) + Vector([1, 2, 3, 4]).opp() -->")
     print (Vector([1, 2, 3, 4]) + Vector([1, 2, 3, 4]).opp())
-    print ("Vector([1, 2, 3, 4]) - Vector([1, 2, 3, 4]) --> ")
+    print ("Vector([1, 2, 3, 4]) - Vector([1, 2, 3, 4]) -->")
     print (Vector([1, 2, 3, 4]) - Vector([1, 2, 3, 4]))
-    print ("Vector([1, 2, 3, 4]) / Vector([1, 2, 3, 4]) --> ")
+    print ("Vector([1, 2, 3, 4]) / Vector([1, 2, 3, 4]) -->")
     print (Vector([1, 2, 3, 4]) / Vector([1, 2, 3, 4]))
-    print ("Vector([1, 2, 3, 4]).add(1.5) --> ")
+    print ("Vector([1, 2, 3, 4]).add(1.5) -->")
     print (Vector([1, 2, 3, 4]).add(1.5))
-    print ("(Vector([1, 2, 3, 4]) - Vector([1, 2, 3, 4]).mul(2)).abs() --> ")
+    print ("(Vector([1, 2, 3, 4]) - Vector([1, 2, 3, 4]).mul(2)).abs() -->")
     print ((Vector([1, 2, 3, 4]) - Vector([1, 2, 3, 4]).mul(2)).abs())
-    print ("Vector([1, 2, 3, 4]).normalization() --> ")
+    print ("Vector([1, 2, 3, 4]).normalization() -->")
     print (Vector([1, 2, 3, 4]).normalization())
+    print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) -->")
+    print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]))
+    print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose() -->")
+    print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose())
