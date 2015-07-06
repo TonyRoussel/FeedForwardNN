@@ -104,8 +104,8 @@ class Matrix(object):
     def transpose(self):
         return Matrix([Vector(list(item)) for item in zip(*self._matrix)])
 
-    def opp(self):##############
-        return Matrix()
+    def opp(self):
+        return Matrix(map(lambda x: x.opp(), self._matrix))
 
     def __add__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
@@ -164,4 +164,7 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]))
     print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose() -->")
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose())
+    print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) + Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])])")
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) + Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]))
+    print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).opp() -->")
+    print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).opp())
