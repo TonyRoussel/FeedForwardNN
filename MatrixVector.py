@@ -1,5 +1,6 @@
 import operator
 import math
+import random
 
 class Vector(object):
     def __init__(self, lst):
@@ -8,6 +9,11 @@ class Vector(object):
     @classmethod
     def fromLen(cls, l):
         _vector = [0] * l
+        return cls(_vector)
+
+    @classmethod
+    def randomVec(cls, l):
+        _vector = [random.random() for _ in range(0, l)]
         return cls(_vector)
 
     def len(self):
@@ -89,6 +95,10 @@ class Matrix(object):
         _matrix = [Vector.fromLen(col)] * row
         return cls(_matrix)
 
+    @classmethod
+    def randomMat(cls, row, col):
+        
+
     def isSquare(self):
         return self.getRowLen() == self.getColLen()
 
@@ -106,6 +116,18 @@ class Matrix(object):
 
     def opp(self):
         return Matrix(map(lambda x: x.opp(), self._matrix))
+
+    def dotProduct(self, rhsmat):
+        if (self.getColLen() != rhsmat.getRowLen()):
+            raise MatrixError, "dotProduct invalid matrix size"
+        result = Matrix.fromSize(self.getRowLen(), rhsmat.getColLen())
+        for i in range(0, result.getRowLen()):
+            for j in range(0, result.getColLen()):
+                sum = 0
+                for k in range(0, result.getColLen()):
+                    sum += self[i][k] * rhsmat[k][j]
+                result[i][j] = sum
+        return result
 
     def __add__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
@@ -168,3 +190,5 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) + Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]))
     print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).opp() -->")
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).opp())
+    print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).dotProduct(Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose())")
+    print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).dotProduct(Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose()))
