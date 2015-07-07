@@ -7,8 +7,8 @@ class Vector(object):
         self._vector = lst
 
     @classmethod
-    def fromLen(cls, l):
-        _vector = [0] * l
+    def fromLen(cls, l, val=0):
+        _vector = [val] * l
         return cls(_vector)
 
     @classmethod
@@ -120,7 +120,7 @@ class Matrix(object):
 
     def dotProduct(self, rhsmat):
         if (self.getColLen() != rhsmat.getRowLen()):
-            raise MatrixError
+            raise MatrixError, "dotProduct invalid matrix size"
         result = Matrix.fromSize(self.getRowLen(), rhsmat.getColLen())
         for i in range(0, result.getRowLen()):
             for j in range(0, result.getColLen()):
@@ -132,27 +132,27 @@ class Matrix(object):
 
     def __add__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError
+            raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l + r, self._matrix, rhsmat._matrix))
 
     def __sub__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError
+            raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l - r, self._matrix, rhsmat._matrix))
 
     def __mul__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError
+            raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l * r, self._matrix, rhsmat._matrix))
 
     def __div__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError
+            raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l / r, self._matrix, rhsmat._matrix))
 
     def __pow__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError
+            raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l ** r, self._matrix, rhsmat._matrix))
 
     def __str__(self):
@@ -171,18 +171,18 @@ contentrequest = [list() for _ in range(0, 2)]
 for idx, line in enumerate(sys.stdin):
     spltLine = line.rstrip('\n').split(' ')
     if (idx == 0):
-        nfeature = int(spltLine[0])
-        nobs = int(spltLine[1])
+        n = int(spltLine[0])
+        m = int(spltLine[1])
         continue
-    if (idx == nobs + 1):
+    if (idx == m + 1):
         npredict = int(spltLine[0])
         continue
     spltLine = [float(val) for val in spltLine]
-    if (idx <= nobs):
+    if (idx <= m):
         contentrequest[0].append(Vector(spltLine))
         continue
     contentrequest[1].append(Vector(spltLine))
-    if (idx >= nobs + npredict + 1):
+    if (idx >= m + npredict + 1):
         break
 trainingMatrix = Matrix(contentrequest[0])
 predictMatrix = Matrix(contentrequest[1])
@@ -192,8 +192,9 @@ print ("trainingMatrix")
 print (trainingMatrix)
 print ("predictMatrix")
 print (predictMatrix)
-X = Matrix([trainingMatrix[i] for i in range(0, nfeature)])
-Y = Matrix([trainingMatrix[nfeature]])
+X = Matrix([trainingMatrix[i] for i in range(0, n)])
+X = Matrix([Vector.fromLen(m, val=1)] + X._matrix)
+Y = Matrix([trainingMatrix[n]])
 print ("X")
 print (X)
 print ("Y")
