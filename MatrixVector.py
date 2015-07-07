@@ -12,7 +12,7 @@ class Vector(object):
         return cls(_vector)
 
     @classmethod
-    def randomVec(cls, l):
+    def random(cls, l):
         _vector = [random.random() for _ in range(0, l)]
         return cls(_vector)
 
@@ -96,8 +96,9 @@ class Matrix(object):
         return cls(_matrix)
 
     @classmethod
-    def randomMat(cls, row, col):
-        
+    def random(cls, row, col):
+        _matrix = [Vector.random(col) for _ in range(0, row)]
+        return cls(_matrix)
 
     def isSquare(self):
         return self.getRowLen() == self.getColLen()
@@ -192,3 +193,5 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).opp())
     print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).dotProduct(Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose())")
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).dotProduct(Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose()))
+    print ("Matrix.random(3, 4)")
+    print (Matrix.random(3, 4))
