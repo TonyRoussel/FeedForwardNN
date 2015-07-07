@@ -7,8 +7,8 @@ class Vector(object):
         self._vector = lst
 
     @classmethod
-    def fromLen(cls, l):
-        _vector = [0] * l
+    def fromLen(cls, l, val=0):
+        _vector = [val] * l
         return cls(_vector)
 
     @classmethod
