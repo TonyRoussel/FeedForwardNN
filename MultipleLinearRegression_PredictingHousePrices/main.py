@@ -199,3 +199,5 @@ print ("X")
 print (X)
 print ("Y")
 print (Y)
+
+# http://www.holehouse.org/mlclass/04_Linear_Regression_with_multiple_variables.html
