@@ -204,7 +204,6 @@ def gradientDescent(X, y, thetas, alpha, numiters):
         sdiffm = diffM.sum(axis=0).transpose()
         sigma = sdiffm * (1 / float(m))
         thetas = (thetas.transpose() - (sigma * alpha)).transpose()
-        print costFunction(X, y, thetas)
     return thetas
 
 contentrequest = [list() for _ in range(0, 2)]
