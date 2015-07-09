@@ -246,7 +246,7 @@ print ("hx(thetas, Xones)")
 print (hx(thetas, Xones))
 print ("costFunction(Xones, Y, thetas)")
 print (costFunction(Xones, Y, thetas))
-print ("gradientDescent(Xones, Y, thetas, 0.01, 100)")
+print ("gradientDescent(Xones, Y, thetas, 0.1, 5000)")
 print (gradientDescent(Xones, Y, thetas, 0.1, 5000))
 
 # http://www.holehouse.org/mlclass/04_Linear_Regression_with_multiple_variables.html
