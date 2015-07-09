@@ -40,17 +40,23 @@ class Vector(object):
     def __add__(self, rhsvec):
         return Vector(map(operator.add, self._vector, rhsvec._vector))
 
-    def __sub__(self, rhsvec):
-        return Vector(map(operator.sub, self._vector, rhsvec._vector))
+    def __sub__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            return Vector(map(operator.sub, self._vector, rhs._vector))
+        return Vector([x - rhs for x in self._vector])
 
-    def __mul__(self, rhsvec):
-        return Vector(map(operator.mul, self._vector, rhsvec._vector))
+    def __mul__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            return Vector(map(operator.mul, self._vector, rhs._vector))
+        return Vector([x * rhs for x in self._vector])
 
     def __div__(self, rhsvec):
         return Vector(map(operator.div, self._vector, rhsvec._vector))
 
-    def __pow__(self, rhsvec):
-        return Vector(map(operator.pow, self._vector, rhsvec._vector))
+    def __pow__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            return Vector(map(operator.pow, self._vector, rhsvec._vector))
+        return Vector([x ** rhs for x in self._vector])
 
     def opp(self):
         return Vector(map(lambda x: -x, self._vector))
@@ -124,36 +130,47 @@ class Matrix(object):
         result = Matrix.fromSize(self.getRowLen(), rhsmat.getColLen())
         for i in range(0, result.getRowLen()):
             for j in range(0, result.getColLen()):
-                sum = 0
-                for k in range(0, result.getColLen()):
-                    sum += self[i][k] * rhsmat[k][j]
-                result[i][j] = sum
+                summ = 0
+                for k in range(0, self.getColLen()):
+                    summ += self[i][k] * rhsmat[k][j]
+                result[i][j] = summ
         return result
 
+    def sum(self, axis=0):
+        if (axis == 0):
+            return Matrix(map(lambda x: Vector([x.sum()]), self._matrix))
+        return Matrix(map(lambda x: Vector([x.sum()]), self.transpose()._matrix))
+                      
     def __add__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
             raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l + r, self._matrix, rhsmat._matrix))
 
-    def __sub__(self, rhsmat):
-        if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError, "wiseOp on different size matrixs"
-        return Matrix(map(lambda l, r: l - r, self._matrix, rhsmat._matrix))
+    def __sub__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            if (self.getSize() != rhs.getSize()):
+                raise MatrixError, "wiseOp on different size matrixs"
+            return Matrix(map(lambda l, r: l - r, self._matrix, rhs._matrix))
+        return Matrix(map(lambda l: l - rhs, self._matrix))
 
-    def __mul__(self, rhsmat):
-        if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError, "wiseOp on different size matrixs"
-        return Matrix(map(lambda l, r: l * r, self._matrix, rhsmat._matrix))
+    def __mul__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            if (self.getSize() != rhs.getSize()):
+                raise MatrixError, "wiseOp on different size matrixs"
+            return Matrix(map(lambda l, r: l * r, self._matrix, rhs._matrix))
+        return Matrix(map(lambda l: l * rhs, self._matrix))
 
     def __div__(self, rhsmat):
         if (self.getSize() != rhsmat.getSize()):
             raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l / r, self._matrix, rhsmat._matrix))
 
-    def __pow__(self, rhsmat):
-        if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError, "wiseOp on different size matrixs"
-        return Matrix(map(lambda l, r: l ** r, self._matrix, rhsmat._matrix))
+    def __pow__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            if (self.getSize() != rhs.getSize()):
+                raise MatrixError, "wiseOp on different size matrixs"
+            return Matrix(map(lambda l, r: l ** r, self._matrix, rhs._matrix))
+        return Matrix(map(lambda l: l ** rhs, self._matrix))
 
     def __str__(self):
         return "[" + '\n'.join(str(row) for row in self._matrix) + "]"
@@ -166,6 +183,29 @@ class Matrix(object):
 
 ##########################################################################################
 import sys
+
+def hx(thetas, X):
+    hxdotp = thetas.transpose().dotProduct(X)
+    return hxdotp[0].sum()
+
+def costFunction(X, y, thetas):
+    m = y.getColLen()
+    H = thetas.transpose().dotProduct(X)
+    diff = H - y
+    diff = diff ** 2
+    return diff[0].sum() / (2 * m)
+
+def gradientDescent(X, y, thetas, alpha, numiters):
+    m = y.getColLen()
+    for i in range(0, numiters):
+        H = thetas.transpose().dotProduct(X)
+        diff = H - y
+        diffM = X * diff[0]
+        sdiffm = diffM.sum(axis=0).transpose()
+        sigma = sdiffm * (1 / float(m))
+        thetas = (thetas.transpose() - (sigma * alpha)).transpose()
+        print costFunction(X, y, thetas)
+    return thetas
 
 contentrequest = [list() for _ in range(0, 2)]
 for idx, line in enumerate(sys.stdin):
@@ -193,11 +233,20 @@ print (trainingMatrix)
 print ("predictMatrix")
 print (predictMatrix)
 X = Matrix([trainingMatrix[i] for i in range(0, n)])
-X = Matrix([Vector.fromLen(m, val=1)] + X._matrix)
+Xones = Matrix([Vector.fromLen(m, val=1)] + X._matrix)
 Y = Matrix([trainingMatrix[n]])
-print ("X")
-print (X)
+thetas = Matrix.random(1, Xones.getRowLen()).transpose()
+print ("Xones")
+print (Xones)
 print ("Y")
 print (Y)
+print ("thetas")
+print (thetas)
+print ("hx(thetas, Xones)")
+print (hx(thetas, Xones))
+print ("costFunction(Xones, Y, thetas)")
+print (costFunction(Xones, Y, thetas))
+print ("gradientDescent(Xones, Y, thetas, 0.01, 100)")
+print (gradientDescent(Xones, Y, thetas, 0.1, 5000))
 
 # http://www.holehouse.org/mlclass/04_Linear_Regression_with_multiple_variables.html
