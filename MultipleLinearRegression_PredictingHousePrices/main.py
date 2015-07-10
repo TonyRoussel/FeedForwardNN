@@ -206,6 +206,25 @@ def gradientDescent(X, y, thetas, alpha, numiters):
         thetas = (thetas.transpose() - (sigma * alpha)).transpose()
     return thetas
 
+def gradientDescentConvergence(X, y, thetas, alpha, distConverge, stepCheck):
+    i = 0;
+    lastCost = costFunction(X, y, thetas)
+    m = y.getColLen()
+    while True:
+        H = thetas.transpose().dotProduct(X)
+        diff = H - y
+        diffM = X * diff[0]
+        sdiffm = diffM.sum(axis=0).transpose()
+        sigma = sdiffm * (1 / float(m))
+        thetas = (thetas.transpose() - (sigma * alpha)).transpose()
+        if (i % stepCheck == 0):
+            newCost = costFunction(X, y, thetas)
+            if math.fabs(lastCost - newCost) <= distConverge:
+                break
+            lastCost = newCost
+    return thetas
+
+
 contentrequest = [list() for _ in range(0, 2)]
 for idx, line in enumerate(sys.stdin):
     spltLine = line.rstrip('\n').split(' ')
@@ -245,11 +264,12 @@ print ("hx(thetas, Xones)")
 print (hx(thetas, Xones))
 print ("costFunction(Xones, Y, thetas)")
 print (costFunction(Xones, Y, thetas))
-thetas = gradientDescent(Xones, Y, thetas, 0.1, 5000)
+thetas = gradientDescentConvergence(Xones, Y, thetas, 0.1, 0.000000001, 10)
 print ("costFunction(Xones, Y, thetas) final")
 print (costFunction(Xones, Y, thetas))
 print "thetas final"
 print thetas
-print thetas.transpose().dotProduct(Matrix([Vector.fromLen(npredict, val=1)] + predictMatrix._matrix))
-
+resultPredict = thetas.transpose().dotProduct(Matrix([Vector.fromLen(npredict, val=1)] + predictMatrix._matrix))
+for res in resultPredict[0].getContainer():
+    print res
 # http://www.holehouse.org/mlclass/04_Linear_Regression_with_multiple_variables.html
