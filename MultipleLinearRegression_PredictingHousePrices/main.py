@@ -245,7 +245,11 @@ print ("hx(thetas, Xones)")
 print (hx(thetas, Xones))
 print ("costFunction(Xones, Y, thetas)")
 print (costFunction(Xones, Y, thetas))
-print ("gradientDescent(Xones, Y, thetas, 0.1, 5000)")
-print (gradientDescent(Xones, Y, thetas, 0.1, 5000))
+thetas = gradientDescent(Xones, Y, thetas, 0.1, 5000)
+print ("costFunction(Xones, Y, thetas) final")
+print (costFunction(Xones, Y, thetas))
+print "thetas final"
+print thetas
+print thetas.transpose().dotProduct(Matrix([Vector.fromLen(npredict, val=1)] + predictMatrix._matrix))
 
 # http://www.holehouse.org/mlclass/04_Linear_Regression_with_multiple_variables.html
