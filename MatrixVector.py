@@ -22,6 +22,14 @@ class Vector(object):
     def getContainer(self):
         return self._vector
 
+    def min(self):
+        idx, val = min(enumerate(self._vector), key=operator.itemgetter(1))
+        return idx
+
+    def max(self):
+        idx, val = max(enumerate(self._vector), key=operator.itemgetter(1))
+        return idx
+
     def add(self, rhs):
         return Vector(map(lambda x: x + rhs, self._vector))
 
@@ -75,6 +83,9 @@ class Vector(object):
     def abs(self):
         return Vector(map(lambda x: x if x >= 0 else -x, self._vector))
 
+    def sqrt(self):
+        return Vector(map(lambda x: math.sqrt(x), self._vector))
+
     def mean(self):
         return sum(self._vector) / float(len(self._vector))
 
@@ -123,6 +134,9 @@ class Matrix(object):
 
     def opp(self):
         return Matrix(map(lambda x: x.opp(), self._matrix))
+
+    def sqrt(self):
+        return Matrix(map(lambda x: x.sqrt(), self._matrix))
 
     def dotProduct(self, rhsmat):
         if (self.getColLen() != rhsmat.getRowLen()):
