@@ -226,3 +226,5 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).dotProduct(Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]).transpose()))
     print ("Matrix.random(3, 4)")
     print (Matrix.random(3, 4))
+    print ("Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) - (Matrix([Vector([1, 2, 3, 4])]))[0] -->")
+    print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) - (Matrix([Vector([1, 2, 3, 4])]))[0])
