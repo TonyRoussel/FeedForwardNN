@@ -97,6 +97,9 @@ class Vector(object):
     def sqrt(self):
         return Vector(map(lambda x: math.sqrt(x), self._vector))
 
+    def exp(self):
+        return Vector(map(lambda x: math.exp(x), self._vector))
+
     def mean(self):
         return sum(self._vector) / float(len(self._vector))
 
@@ -151,6 +154,9 @@ class Matrix(object):
 
     def sqrt(self):
         return Matrix(map(lambda x: x.sqrt(), self._matrix))
+
+    def exp(self):
+        return Matrix(map(lambda x: x.exp(), self._matrix))
 
     def dotProduct(self, rhsmat):
         if (self.getColLen() != rhsmat.getRowLen()):
@@ -258,3 +264,5 @@ if (__name__ == "__main__"):
     print (2. / Matrix([Vector([1, 2, 3, 4])]))
     print ('-(Matrix([Vector([1, 2, 3, 4])]))')
     print (-(Matrix([Vector([1, 2, 3, 4])])))
+    print ('(Matrix([Vector([1, 2, 3, 4])])).exp()')
+    print ((Matrix([Vector([1, 2, 3, 4])])).exp())
