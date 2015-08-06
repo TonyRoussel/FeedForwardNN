@@ -66,6 +66,9 @@ class Vector(object):
             return Vector(map(operator.div, self._vector, rhs._vector))
         return Vector([x / rhs for x in self._vector])
 
+    def __rdiv__(self, rhs):
+        return Vector([rhs / x for x in self._vector])
+
     def __pow__(self, rhs):
         if isinstance(rhs, self.__class__):
             return Vector(map(operator.pow, self._vector, rhsvec._vector))
@@ -189,6 +192,9 @@ class Matrix(object):
             return Matrix(map(lambda l, r: l / r, self._matrix, rhs._matrix))
         return Matrix(map(lambda l: l / rhs, self._matrix))
 
+    def __rdiv__(self, rhs):
+        return Matrix(map(lambda l: rhs / l, self._matrix))
+
     def __pow__(self, rhs):
         if isinstance(rhs, self.__class__):
             if (self.getSize() != rhs.getSize()):
@@ -242,3 +248,5 @@ if (__name__ == "__main__"):
     print (1 - Matrix([Vector([1, 2, 3, 4])]))
     print ("Matrix.random([Vector([1, 2, 3, 4])) / 2.")
     print (Matrix([Vector([1, 2, 3, 4])]) / 2.)
+    print ("2. / Matrix.random([Vector([1, 2, 3, 4]))")
+    print (2. / Matrix([Vector([1, 2, 3, 4])]))
