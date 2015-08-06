@@ -1,6 +1,7 @@
 import operator
 import math
 import random
+from itertools import repeat
 
 class Vector(object):
     def __init__(self, lst):
@@ -129,7 +130,7 @@ class Matrix(object):
 
     @classmethod
     def fromSize(cls, row, col):
-        _matrix = [Vector.fromLen(col)] * row
+        _matrix = [Vector.fromLen(col) for i in repeat(None, row)]
         return cls(_matrix)
 
     @classmethod
