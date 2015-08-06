@@ -77,6 +77,9 @@ class Vector(object):
     def opp(self):
         return Vector(map(lambda x: -x, self._vector))
    
+    def __neg__(self):
+        return self.opp()
+
     def sum(self):
         return sum(self._vector)
 
@@ -142,6 +145,9 @@ class Matrix(object):
 
     def opp(self):
         return Matrix(map(lambda x: x.opp(), self._matrix))
+
+    def __neg__(self):
+        return self.opp()
 
     def sqrt(self):
         return Matrix(map(lambda x: x.sqrt(), self._matrix))
@@ -246,7 +252,9 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) - (Matrix([Vector([1, 2, 3, 4])]))[0])
     print ("1 - Matrix.random([Vector([1, 2, 3, 4]))")
     print (1 - Matrix([Vector([1, 2, 3, 4])]))
-    print ("Matrix.random([Vector([1, 2, 3, 4])) / 2.")
+    print ("Matrix([Vector([1, 2, 3, 4])) / 2.")
     print (Matrix([Vector([1, 2, 3, 4])]) / 2.)
-    print ("2. / Matrix.random([Vector([1, 2, 3, 4]))")
+    print ("2. / Matrix([Vector([1, 2, 3, 4]))")
     print (2. / Matrix([Vector([1, 2, 3, 4])]))
+    print ('-(Matrix([Vector([1, 2, 3, 4])]))')
+    print (-(Matrix([Vector([1, 2, 3, 4])])))
