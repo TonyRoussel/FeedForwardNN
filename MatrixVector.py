@@ -48,6 +48,9 @@ class Vector(object):
     def __add__(self, rhsvec):
         return Vector(map(operator.add, self._vector, rhsvec._vector))
 
+    def __radd__(self, rhs):
+        return Vector(map(lambda x: rhs + x, self._vector))
+
     def __sub__(self, rhs):
         if isinstance(rhs, self.__class__):
             return Vector(map(operator.sub, self._vector, rhs._vector))
@@ -179,6 +182,9 @@ class Matrix(object):
         if (self.getSize() != rhsmat.getSize()):
             raise MatrixError, "wiseOp on different size matrixs"
         return Matrix(map(lambda l, r: l + r, self._matrix, rhsmat._matrix))
+
+    def __radd__(self, rhs):
+        return Matrix(map(lambda l: rhs + l, self._matrix))
 
     def __sub__(self, rhs):
         if isinstance(rhs, self.__class__):
