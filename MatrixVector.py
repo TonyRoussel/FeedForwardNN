@@ -229,6 +229,12 @@ class Matrix(object):
     def __setitem__(self, idx, value):
         self._matrix[idx] = value
 
+    # sigmoid function
+    def nonlin(self, deriv=False):
+        if deriv is True:
+            return self * (1 - self)
+        return 1 / (1 + (-self).exp())
+
 
 
 
@@ -272,3 +278,7 @@ if (__name__ == "__main__"):
     print (-(Matrix([Vector([1, 2, 3, 4])])))
     print ('(Matrix([Vector([1, 2, 3, 4])])).exp()')
     print ((Matrix([Vector([1, 2, 3, 4])])).exp())
+    print ("(Matrix([Vector([1, 2, 3, 4])])).nonlin()")
+    print ((Matrix([Vector([1, 2, 3, 4])])).nonlin())
+    print ("(Matrix([Vector([1, 2, 3, 4])])).nonlin(True)")
+    print ((Matrix([Vector([1, 2, 3, 4])])).nonlin(True))
