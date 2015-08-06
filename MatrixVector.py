@@ -61,8 +61,10 @@ class Vector(object):
             return Vector(map(operator.mul, self._vector, rhs._vector))
         return Vector([x * rhs for x in self._vector])
 
-    def __div__(self, rhsvec):
-        return Vector(map(operator.div, self._vector, rhsvec._vector))
+    def __div__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            return Vector(map(operator.div, self._vector, rhs._vector))
+        return Vector([x / rhs for x in self._vector])
 
     def __pow__(self, rhs):
         if isinstance(rhs, self.__class__):
@@ -180,10 +182,12 @@ class Matrix(object):
             return Matrix(map(lambda l, r: l * r, self._matrix, rhs._matrix))
         return Matrix(map(lambda l: l * rhs, self._matrix))
 
-    def __div__(self, rhsmat):
-        if (self.getSize() != rhsmat.getSize()):
-            raise MatrixError, "wiseOp on different size matrixs"
-        return Matrix(map(lambda l, r: l / r, self._matrix, rhsmat._matrix))
+    def __div__(self, rhs):
+        if isinstance(rhs, self.__class__):
+            if (self.getSize() != rhs.getSize()):
+                raise MatrixError, "wiseOp on different size matrixs"
+            return Matrix(map(lambda l, r: l / r, self._matrix, rhs._matrix))
+        return Matrix(map(lambda l: l / rhs, self._matrix))
 
     def __pow__(self, rhs):
         if isinstance(rhs, self.__class__):
@@ -236,3 +240,5 @@ if (__name__ == "__main__"):
     print (Matrix([Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4]), Vector([1, 2, 3, 4])]) - (Matrix([Vector([1, 2, 3, 4])]))[0])
     print ("1 - Matrix.random([Vector([1, 2, 3, 4]))")
     print (1 - Matrix([Vector([1, 2, 3, 4])]))
+    print ("Matrix.random([Vector([1, 2, 3, 4])) / 2.")
+    print (Matrix([Vector([1, 2, 3, 4])]) / 2.)
