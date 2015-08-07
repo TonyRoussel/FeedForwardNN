@@ -162,6 +162,9 @@ class Matrix(object):
     def sqrt(self):
         return Matrix(map(lambda x: x.sqrt(), self._matrix))
 
+    def abs(self):
+        return Matrix(map(lambda x: x.abs(), self._matrix))
+
     def exp(self):
         return Matrix(map(lambda x: x.exp(), self._matrix))
 
@@ -226,6 +229,10 @@ class Matrix(object):
                 raise MatrixError, "wiseOp on different size matrixs"
             return Matrix(map(lambda l, r: l ** r, self._matrix, rhs._matrix))
         return Matrix(map(lambda l: l ** rhs, self._matrix))
+
+    def mean(self):
+        subv = Vector(map(lambda l: l.mean(), self._matrix))
+        return subv.mean()
 
     def __str__(self):
         return "[" + '\n'.join(str(row) for row in self._matrix) + "]"
