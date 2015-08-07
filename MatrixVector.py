@@ -14,7 +14,7 @@ class Vector(object):
 
     @classmethod
     def random(cls, l):
-        _vector = [random.random() for _ in range(0, l)]
+        _vector = [random.random() for _ in xrange(0, l)]
         return cls(_vector)
 
     def len(self):
@@ -135,7 +135,7 @@ class Matrix(object):
 
     @classmethod
     def random(cls, row, col):
-        _matrix = [Vector.random(col) for _ in range(0, row)]
+        _matrix = [Vector.random(col) for _ in xrange(0, row)]
         return cls(_matrix)
 
     def isSquare(self):
@@ -172,10 +172,10 @@ class Matrix(object):
         if (self.getColLen() != rhsmat.getRowLen()):
             raise MatrixError, "dotProduct invalid matrix size"
         result = Matrix.fromSize(self.getRowLen(), rhsmat.getColLen())
-        for i in range(0, result.getRowLen()):
-            for j in range(0, result.getColLen()):
+        for i in xrange(0, result.getRowLen()):
+            for j in xrange(0, result.getColLen()):
                 summ = 0
-                for k in range(0, self.getColLen()):
+                for k in xrange(0, self.getColLen()):
                     summ += self[i][k] * rhsmat[k][j]
                 result[i][j] = summ
         return result
