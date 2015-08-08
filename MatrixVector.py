@@ -17,6 +17,11 @@ class Vector(object):
         _vector = [random.random() for _ in xrange(0, l)]
         return cls(_vector)
 
+    @classmethod
+    def ones(cls, l):
+        _vector = [1. for _ in xrange(0, l)]
+        return cls(_vector)
+
     def len(self):
         return len(self._vector)
 
@@ -136,6 +141,11 @@ class Matrix(object):
     @classmethod
     def random(cls, row, col):
         _matrix = [Vector.random(col) for _ in xrange(0, row)]
+        return cls(_matrix)
+
+    @classmethod
+    def ones(cls, row, col):
+        _matrix = [Vector.ones(col) for _ in xrange(0, row)]
         return cls(_matrix)
 
     def isSquare(self):
@@ -298,3 +308,5 @@ if (__name__ == "__main__"):
     print ((Matrix([Vector([1, 2, 3, 4])])).nonlin(True))
     print ("2 * Matrix.random(3, 1) - 1")
     print (2 * Matrix.random(3, 1) - 1)
+    print ("Matrix.ones(4, 3)")
+    print (Matrix.ones(4, 3))
