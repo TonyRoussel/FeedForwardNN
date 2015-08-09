@@ -39,10 +39,11 @@ class FeedForwardNN(object):
         self._layer_input = list()
         self._layer_output = list()
 
-        self._layer_output.append(X)
-
-        for weight in self._weights:
-            layer_input = self._layer_output[-1] if not self._bias_unit else append_bias(self._layer_output[-1])
+        for idx, weight in enumerate(self._weights):
+            if idx == 0:
+                layer_input = X if not self._bias_unit else append_bias(X)
+            else:
+                layer_input = self._layer_output[-1] if not self._bias_unit else append_bias(self._layer_output[-1])
             layer_input = layer_input.dotProduct(weight)
 
             self._layer_input.append(layer_input)
@@ -93,9 +94,9 @@ if __name__ == "__main__":
     print ffnn._layers_shape
     print "ffnn._layers_count"
     print ffnn._layers_count
-    print "ffnn._weights"
-    for layer in ffnn._weights:
-        print layer
+    # print "ffnn._weights"
+    # for layer in ffnn._weights:
+    #     print layer
     print "ffnn.run(X)"
     print ffnn.run(X)
     print "ffnn.backpropagation_training(X, y)"
