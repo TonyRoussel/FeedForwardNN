@@ -57,16 +57,26 @@ class FeedForwardNN(object):
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
                 l_error = y - output
+                deltas = [l_error * output.nonlin(True)] + deltas
             else:
                 l_error = deltas[-idx].dotProduct(self._weights[-idx].transpose())
-            # print "len(self._layer_output)"
-            # print len(self._layer_output)
-            # print "l_error.getSize()"
-            # print l_error.getSize()
-            # print "output.nonlin(True).getSize()"
-            # print output.nonlin(True).getSize()
-            deltas = [l_error * output.nonlin(True)] + deltas
+                delta = l_error * output.nonlin(True) if not self._bias_unit else remove_bias(l_error) * output.nonlin(True)
+                deltas = [delta] + deltas
         return deltas
+
+    def _proceed_weights_step(self, alpha, deltas, X):
+        """ given an alpha step and the deltas of each layer, move the weights """
+        for idx in xrange(self._layers_count - 1):
+            if idx == 0:
+                if not self._bias_unit:
+                    self._weights[idx] += alpha * (X.transpose().dotProduct(deltas[idx]))
+                else:
+                    self._weights[idx] += alpha * (append_bias(X).transpose().dotProduct(deltas[idx]))
+            else:
+                if not self._bias_unit:
+                    self._weights[idx] += alpha * (self._layer_output[idx - 1].transpose().dotProduct(deltas[idx]))
+                else:
+                    self._weights[idx] += alpha * (append_bias(self._layer_output[idx - 1]).transpose().dotProduct(deltas[idx]))
 
     def backpropagation_training(self, X, y, alpha=0.1, epoch=100):
         """ Train the neural net with the backpropagation algorithm
@@ -77,7 +87,7 @@ class FeedForwardNN(object):
             # for each layer output calculate distance to target
             deltas = self._measure_deltas(y)
             # move the weights toward target with alpha step
-            # self._proceed_weights_step(alpha, deltas) #############
+            self._proceed_weights_step(alpha, deltas, X)
         # return last error
         return ((y - self._layer_output[-1]).abs().mean())
 
@@ -94,10 +104,7 @@ if __name__ == "__main__":
     print ffnn._layers_shape
     print "ffnn._layers_count"
     print ffnn._layers_count
-    # print "ffnn._weights"
-    # for layer in ffnn._weights:
-    #     print layer
+    print "ffnn.backpropagation_training(X, y)"
+    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=10000)
     print "ffnn.run(X)"
     print ffnn.run(X)
-    print "ffnn.backpropagation_training(X, y)"
-    print ffnn.backpropagation_training(X, y)
