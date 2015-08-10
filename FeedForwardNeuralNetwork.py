@@ -44,10 +44,10 @@ class FeedForwardNN(object):
                 layer_input = X if not self._bias_unit else append_bias(X)
             else:
                 layer_input = self._layer_output[-1] if not self._bias_unit else append_bias(self._layer_output[-1])
-            layer_input = layer_input.dotProduct(weight)
+            layer_output = layer_input.dotProduct(weight).nonlin()
 
             self._layer_input.append(layer_input)
-            self._layer_output.append(layer_input.nonlin())
+            self._layer_output.append(layer_output)
         return self._layer_output[-1]
 
     def _measure_deltas(self, y):
@@ -57,26 +57,17 @@ class FeedForwardNN(object):
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
                 l_error = y - output
-                deltas = [l_error * output.nonlin(True)] + deltas
+                delta = l_error * output.nonlin(True)
             else:
                 l_error = deltas[-idx].dotProduct(self._weights[-idx].transpose())
                 delta = l_error * output.nonlin(True) if not self._bias_unit else remove_bias(l_error) * output.nonlin(True)
-                deltas = [delta] + deltas
+            deltas.insert(0, delta)
         return deltas
 
     def _proceed_weights_step(self, alpha, deltas, X):
         """ given an alpha step and the deltas of each layer, move the weights """
         for idx in xrange(self._layers_count - 1):
-            if idx == 0:
-                if not self._bias_unit:
-                    self._weights[idx] += alpha * (X.transpose().dotProduct(deltas[idx]))
-                else:
-                    self._weights[idx] += alpha * (append_bias(X).transpose().dotProduct(deltas[idx]))
-            else:
-                if not self._bias_unit:
-                    self._weights[idx] += alpha * (self._layer_output[idx - 1].transpose().dotProduct(deltas[idx]))
-                else:
-                    self._weights[idx] += alpha * (append_bias(self._layer_output[idx - 1]).transpose().dotProduct(deltas[idx]))
+            self._weights[idx] += alpha * (self._layer_input[idx].transpose().dotProduct(deltas[idx]))
 
     def backpropagation_training(self, X, y, alpha=0.1, epoch=100):
         """ Train the neural net with the backpropagation algorithm
