@@ -15,6 +15,11 @@ def sigmoid(mtx, deriv=False):
         return mtx * (1 - mtx)
     return 1 / (1 + np.exp(-mtx))
 
+def tanh(mtx, deriv=False):
+    if deriv is True:
+        return 1 - mtx * mtx
+    return np.tanh(mtx)
+
 class FeedForwardNN(object):
     """ A feed forward neural network"""
     
@@ -26,7 +31,8 @@ class FeedForwardNN(object):
             raise FeedForwardNeuralNetworkError, "can't init a neural net without at least the in and out size"
 
         # init layer types dictionnary
-        self._layer_type = {"sigmoid" : sigmoid}
+        self._layer_type = {"sigmoid" : sigmoid,
+                            "tanh" : tanh}
 
         # save layers_types
         self._hidden_layer = self._layer_type[hidden_layer]
@@ -78,10 +84,13 @@ class FeedForwardNN(object):
             if idx == 0:
                 l_error = y - output
                 glob_error = np.mean(np.abs(l_error))
-                delta = l_error * sigmoid(output, True)
+                delta = l_error * self._output_layer(output, True)
             else:
                 l_error = np.dot(deltas[-idx], self._weights[-idx].T)
-                delta = l_error * sigmoid(output, True) if not self._bias_unit else remove_bias(l_error) * sigmoid(output, True)
+                if idx < self._layers_count - 1:
+                    delta = l_error * self._hidden_layer(output, True) if not self._bias_unit else remove_bias(l_error) * self._hidden_layer(output, True)
+                else:
+                    delta = l_error * self._input_layer(output, True) if not self._bias_unit else remove_bias(l_error) * self._input_layer(output, True)
             deltas.insert(0, delta)
         return glob_error, deltas
 
