@@ -18,12 +18,14 @@ def nonlin(mtx, deriv=False):
 class FeedForwardNN(object):
     """ A feed forward neural network"""
     
-    def __init__(self, layers_shape, bias_unit=True):
+    def __init__(self, layers_shape, bias_unit=True, hidden_layer="nonlin", output="nonlin"):
         """ initialisation of the ff neural network"""
 
         # check minimum layer shape
         if len(layers_shape) < 2:
             raise FeedForwardNeuralNetworkError, "can't init a neural net without at least the in and out size"
+
+        layer_type = {"nonlin" = nonlin}
         # save the layer shape
         self._layers_shape = layers_shape
         self._layers_count = len(layers_shape)
