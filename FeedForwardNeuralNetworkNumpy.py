@@ -18,14 +18,21 @@ def nonlin(mtx, deriv=False):
 class FeedForwardNN(object):
     """ A feed forward neural network"""
     
-    def __init__(self, layers_shape, bias_unit=True, hidden_layer="nonlin", output="nonlin"):
+    def __init__(self, layers_shape, bias_unit=True, hidden_layer="nonlin", input_layer="nonlin", output_layer="nonlin"):
         """ initialisation of the ff neural network"""
 
         # check minimum layer shape
         if len(layers_shape) < 2:
             raise FeedForwardNeuralNetworkError, "can't init a neural net without at least the in and out size"
 
-        layer_type = {"nonlin" = nonlin}
+        # init layer types dictionnary
+        self._layer_type = {"nonlin" : nonlin}
+
+        # save layers_types
+        self._hidden_layer = self._layer_type[hidden_layer]
+        self._output_layer = self._layer_type[output_layer]
+        self._input_layer = self._layer_type[input_layer]
+
         # save the layer shape
         self._layers_shape = layers_shape
         self._layers_count = len(layers_shape)
@@ -52,7 +59,12 @@ class FeedForwardNN(object):
                 layer_input = X if not self._bias_unit else append_bias(X)
             else:
                 layer_input = self._layer_output[-1] if not self._bias_unit else append_bias(self._layer_output[-1])
-            layer_output = nonlin(np.dot(layer_input, weight))
+            if idx == 0:
+                layer_output = self._input_layer(np.dot(layer_input, weight))
+            elif idx < self._layers_count - 1:
+                layer_output = self._hidden_layer(np.dot(layer_input, weight))
+            else:
+                layer_output = self._output_layer(np.dot(layer_input, weight))
 
             self._layer_input.append(layer_input)
             self._layer_output.append(layer_output)
