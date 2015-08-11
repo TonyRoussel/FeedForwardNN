@@ -1,6 +1,13 @@
 import numpy as np
 import csv
+import operator
 from FeedForwardNeuralNetworkNumpy import FeedForwardNN
+
+# from pybrain.datasets import SupervisedDataSet
+# from pybrain.supervised.trainers import BackpropTrainer
+# from pybrain.tools.shortcuts import buildNetwork
+# from pybrain.structure import SoftmaxLayer
+# from sklearn import preprocessing
 
 
 def read_training_data():
@@ -35,4 +42,27 @@ def normalize(mtx, norm):
 X, y, d = read_training_data()
 norm = normalizer(X)
 ffnn = FeedForwardNN([10, 6, 2])
-ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00188, epoch=1000)
+ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00184, epoch=100000)
+
+prediction = ffnn.run(normalize(X, norm))
+total = len(y)
+count = 0
+for i in xrange(total):
+    indexp = max(enumerate(prediction[i]), key=operator.itemgetter(1))[0]
+    indexe = max(enumerate(y[i]), key=operator.itemgetter(1))[0]
+    if indexp == indexe:
+        count = count + 1
+print "Final rate:", count / float(total)
+
+# X = normalize(X, norm)
+# norm = preprocessing.Normalizer().fit(X)
+# X = norm.transform(X)
+
+# ds = SupervisedDataSet(10, 2)
+# for i in range(0, len(X)):
+#     ds.addSample(X[i], y[i])
+
+# # nn && trainer construction
+# net = buildNetwork(ds.indim, (ds.indim + ds.outdim) / 2, ds.outdim, bias=True) # building the n
+# trainer = BackpropTrainer(net, ds, learningrate=0.01, momentum=0., verbose=True)
+# trainer.trainUntilConvergence(maxEpochs=1000) # Train, until convergence
