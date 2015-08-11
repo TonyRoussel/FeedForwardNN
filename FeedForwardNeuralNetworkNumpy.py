@@ -10,7 +10,7 @@ def append_bias(mtx):
 def remove_bias(mtx):
     return np.delete(mtx, 0, axis=1)
 
-def nonlin(mtx, deriv=False):
+def sigmoid(mtx, deriv=False):
     if deriv is True:
         return mtx * (1 - mtx)
     return 1 / (1 + np.exp(-mtx))
@@ -18,7 +18,7 @@ def nonlin(mtx, deriv=False):
 class FeedForwardNN(object):
     """ A feed forward neural network"""
     
-    def __init__(self, layers_shape, bias_unit=True, hidden_layer="nonlin", input_layer="nonlin", output_layer="nonlin"):
+    def __init__(self, layers_shape, bias_unit=True, hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid"):
         """ initialisation of the ff neural network"""
 
         # check minimum layer shape
@@ -26,7 +26,7 @@ class FeedForwardNN(object):
             raise FeedForwardNeuralNetworkError, "can't init a neural net without at least the in and out size"
 
         # init layer types dictionnary
-        self._layer_type = {"nonlin" : nonlin}
+        self._layer_type = {"sigmoid" : sigmoid}
 
         # save layers_types
         self._hidden_layer = self._layer_type[hidden_layer]
@@ -78,10 +78,10 @@ class FeedForwardNN(object):
             if idx == 0:
                 l_error = y - output
                 glob_error = np.mean(np.abs(l_error))
-                delta = l_error * nonlin(output, True)
+                delta = l_error * sigmoid(output, True)
             else:
                 l_error = np.dot(deltas[-idx], self._weights[-idx].T)
-                delta = l_error * nonlin(output, True) if not self._bias_unit else remove_bias(l_error) * nonlin(output, True)
+                delta = l_error * sigmoid(output, True) if not self._bias_unit else remove_bias(l_error) * sigmoid(output, True)
             deltas.insert(0, delta)
         return glob_error, deltas
 
