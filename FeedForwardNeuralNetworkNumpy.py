@@ -96,13 +96,14 @@ class FeedForwardNN(object):
             deltas.insert(0, delta)
         return glob_error, deltas
 
-    def _proceed_weights_step(self, alpha, deltas, X):
+    def _proceed_weights_step(self, alpha, deltas, X, momentum):
         """ given an alpha step and the deltas of each layer, move the weights """
         for idx in xrange(self._layers_count - 1):
-            delta = alpha * (np.dot(self._layer_input[idx].T, deltas[idx]))
+            delta = alpha * (np.dot(self._layer_input[idx].T, deltas[idx])) + momentum * self._layer_prevdelta[idx]
             self._weights[idx] += delta
+            self._layer_prevdelta[idx] = delta
 
-    def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True):
+    def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99):
         """ Train the neural net with the backpropagation algorithm
         return final error """
 
@@ -116,7 +117,7 @@ class FeedForwardNN(object):
                 print >> sys.stderr, "Error:", str(error)
             
             # move the weights toward target with alpha step
-            self._proceed_weights_step(alpha, deltas, X)
+            self._proceed_weights_step(alpha, deltas, X, momentum)
 
         if verbose:
             print >> sys.stderr, "Final error:", str(error)
