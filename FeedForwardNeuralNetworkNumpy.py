@@ -44,15 +44,17 @@ class FeedForwardNN(object):
         self._layers_count = len(layers_shape)
         self._bias_unit = bias_unit
 
-        # init layer input/output memory
+        # init layer input/output memory, deltas memory
         self._layer_input = list()
         self._layer_output = list()
+        self._layer_prevdelta = list()
 
-        # init the neural layer
+        # init the neural layer && prev delta memory
         self._weights = []
         for s_in, s_out in zip(layers_shape[:-1], layers_shape[1:]):
             # random init with mean 0 of a layer (with bias unit if require)
             self._weights.append(2 * np.random.random((s_in + bias_unit, s_out)) - 1)
+            self._layer_prevdelta.append(np.zeros((s_in + bias_unit, s_out)))
 
     def run(self, X):
         """Run the neural net against data row """
@@ -97,6 +99,7 @@ class FeedForwardNN(object):
     def _proceed_weights_step(self, alpha, deltas, X):
         """ given an alpha step and the deltas of each layer, move the weights """
         for idx in xrange(self._layers_count - 1):
+            delta = 
             self._weights[idx] += alpha * (np.dot(self._layer_input[idx].T, deltas[idx]))
 
     def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True):
