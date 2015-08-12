@@ -99,8 +99,8 @@ class FeedForwardNN(object):
     def _proceed_weights_step(self, alpha, deltas, X):
         """ given an alpha step and the deltas of each layer, move the weights """
         for idx in xrange(self._layers_count - 1):
-            delta = 
-            self._weights[idx] += alpha * (np.dot(self._layer_input[idx].T, deltas[idx]))
+            delta = alpha * (np.dot(self._layer_input[idx].T, deltas[idx]))
+            self._weights[idx] += delta
 
     def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True):
         """ Train the neural net with the backpropagation algorithm
