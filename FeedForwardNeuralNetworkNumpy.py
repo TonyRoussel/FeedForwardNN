@@ -83,7 +83,7 @@ class FeedForwardNN(object):
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
                 l_error = y - output
-                glob_error = np.mean(np.abs(l_error))
+                glob_error = np.sum(l_error ** 2)
                 delta = l_error * self._output_layer(output, True)
             else:
                 l_error = np.dot(deltas[-idx], self._weights[-idx].T)
