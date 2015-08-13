@@ -44,17 +44,21 @@ class FeedForwardNN(object):
         self._layers_count = len(layers_shape)
         self._bias_unit = bias_unit
 
-        # init layer input/output memory, deltas memory
-        self._layer_input = list()
-        self._layer_output = list()
-        self._layer_prevdelta = list()
+        # init layer input/output memory, deltas memory, gradient && delta accumulator
+        self._layer_input = list() # common
+        self._layer_output = list() # common
+        self._layer_prevdelta = list() # momentum
+        self._ms_grad_acc = list() # adadelta
+        self._ms_delta_acc = list() # adadelta
 
-        # init the neural layer && prev delta memory
+        # init the neural layer, prev delta memory, adadelta accumulator
         self._weights = []
         for s_in, s_out in zip(layers_shape[:-1], layers_shape[1:]):
             # random init with mean 0 of a layer (with bias unit if require)
             self._weights.append(2 * np.random.random((s_in + bias_unit, s_out)) - 1)
             self._layer_prevdelta.append(np.zeros((s_in + bias_unit, s_out)))
+            self._ms_grad_acc.append(np.zeros((s_in + bias_unit, s_out)))
+            self._ms_delta_acc.append(np.zeros((s_in + bias_unit, s_out)))
 
     def run(self, X):
         """Run the neural net against data row """
@@ -123,6 +127,37 @@ class FeedForwardNN(object):
             print >> sys.stderr, "Final error:", str(error)
 
         # return last error
+        return error
+
+    def _proceed_weights_step_adadelta(self, deltas, X, p=0.95, e=1e-6):
+        """ given rho, epsilon parameter and previous gradient of each layer, move the weights """
+        for idx in xrange(self._layers_count - 1):
+            gradient = np.dot(self._layer_input[idx].T, deltas[idx]) # compute gradient
+            self._ms_grad_acc[idx] = p * self._ms_grad_acc[idx] + (1 - p) * (gradient ** 2) # accumulate gradient
+            delta = - (np.sqrt(self._ms_delta_acc[idx] + e) / np.sqrt(self._ms_grad_acc[idx] + e)) * gradient # compute update
+            self._ms_delta_acc[idx] = p * self._ms_delta_acc[idx] + (1 - p) * (delta ** 2) # accumulate update
+            self._weights[idx] -= delta
+
+    def adadelta_training(self, X, y, epoch=100, verbose=True):
+        """ Train the neural net with the adadelta algorithm
+        return final error """
+
+        verbose_cycle = 0.01 * epoch
+        for epk in xrange(0, epoch):
+            self.run(X)
+            # for each layer output calculate distance to target
+            error, deltas = self._measure_deltas(y)
+
+            if verbose and (epk % verbose_cycle) == 0:
+                print >> sys.stderr, "Error:", str(error)
+            
+            # move the weights toward target with alpha step
+            self._proceed_weights_step_adadelta(deltas, X) # p stand for rho and e for epsilon
+
+        if verbose:
+            print >> sys.stderr, "Final error:", str(error)
+
+        # return last error
         return (np.mean(np.abs(y - self._layer_output[-1])))
 
 
@@ -142,6 +177,12 @@ if __name__ == "__main__":
     print "ffnn._layers_count"
     print ffnn._layers_count
     print "ffnn.backpropagation_training(X, y)"
-    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=20000)
+    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=1000)
+    print "ffnn.run(X)"
+    print ffnn.run(X)
+
+    ffnn = FeedForwardNN([3, 4, 2])
+    print "ffnn.adadelta_training(X, y)"
+    print ffnn.adadelta_training(X, y, epoch=1000)
     print "ffnn.run(X)"
     print ffnn.run(X)
