@@ -30,7 +30,38 @@ def read_training_data():
                 y.append([1, 0])
             else:
                 y.append([0, 1])
-    return np.array(X), np.array(y), summon_names
+    return X, y, summon_names
+
+def read_training_data_one_of_n():
+    with open("trainingdata.txt", 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        summon_names = dict()
+        for i, row in enumerate(reader):
+            if i == 0:
+                ncols = len(row)
+            for value in row[0:ncols - 1]:
+                if value not in summon_names:
+                    if len(summon_names) == 0:
+                        summon_names[value] = 0
+                    else:
+                        summon_names[value] = len(summon_names)
+    with open("trainingdata.txt", 'rb') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        X = list()
+        y = list()
+        for i, row in enumerate(reader):
+            line = list()
+            for value in row[0:ncols - 1]:
+                oon = [0] * len(summon_names)
+                oon[summon_names[value]] = 1
+                line = line + oon
+            X.append(line)
+            if int(row[ncols - 1]) == 1:
+                y.append([1, 0])
+            else:
+                y.append([0, 1])
+    return X, y, summon_names
+
 
 def normalizer(X):
     return X.sum(axis=1)
