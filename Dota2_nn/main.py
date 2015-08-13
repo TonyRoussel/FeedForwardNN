@@ -42,7 +42,8 @@ def normalize(mtx, norm):
 X, y, d = read_training_data()
 norm = normalizer(X)
 ffnn = FeedForwardNN([10, 6, 2], hidden_layer="tanh", output_layer="tanh", input_layer="tanh")
-ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.000025, epoch=1000000, momentum=0.99)
+# ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00001, epoch=100, momentum=0.99)
+ffnn.adadelta_training(normalize(X, norm), y, epoch=100)
 
 prediction = ffnn.run(normalize(X, norm))
 total = len(y)
