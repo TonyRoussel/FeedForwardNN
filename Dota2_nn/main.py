@@ -90,16 +90,17 @@ yp = np.array(yp)
 ffnn = FeedForwardNN([len(X[0]), (len(X[0]) + len(y[0])) / 2, len(y[0])], hidden_layer="tanh", output_layer="tanh", input_layer="tanh")
 
 # ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00001, epoch=100, momentum=0.99)
-ffnn.backpropagation_training(X, y, alpha=0.01, epoch=100, momentum=0.99)
+# ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=4000, momentum=0.99)
 # ffnn.adadelta_training(normalize(X, norm), y, epoch=100)
+ffnn.adadelta_training(X, y, epoch=4000)
 
 # prediction = ffnn.run(normalize(X, norm))
-prediction = ffnn.run(X)
-total = len(y)
+prediction = ffnn.run(Xp)
+total = len(yp)
 count = 0
 for i in xrange(total):
     indexp = max(enumerate(prediction[i]), key=operator.itemgetter(1))[0]
-    indexe = max(enumerate(y[i]), key=operator.itemgetter(1))[0]
+    indexe = max(enumerate(yp[i]), key=operator.itemgetter(1))[0]
     if indexp == indexe:
         count = count + 1
 print "Final rate:", count / float(total)
