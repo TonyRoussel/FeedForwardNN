@@ -89,10 +89,10 @@ yp = np.array(yp)
 # norm = normalizer(X)
 ffnn = FeedForwardNN([len(X[0]), (len(X[0]) + len(y[0])) / 2, len(y[0])], hidden_layer="tanh", output_layer="tanh", input_layer="tanh")
 
-# ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00001, epoch=100, momentum=0.99)
-# ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=4000, momentum=0.99)
-# ffnn.adadelta_training(normalize(X, norm), y, epoch=100)
-ffnn.adadelta_training(X, y, epoch=4000)
+# ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00001, epoch=100, momentum=0.99, plot_error=True)
+# ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=4000, momentum=0.99, plot_error=True)
+# ffnn.adadelta_training(normalize(X, norm), y, epoch=100, plot_error=True)
+ffnn.adadelta_training(X, y, epoch=4000, plot_error=True)
 
 # prediction = ffnn.run(normalize(X, norm))
 prediction = ffnn.run(Xp)
@@ -105,15 +105,4 @@ for i in xrange(total):
         count = count + 1
 print "Final rate:", count / float(total)
 
-# X = normalize(X, norm)
-# norm = preprocessing.Normalizer().fit(X)
-# X = norm.transform(X)
-
-# ds = SupervisedDataSet(10, 2)
-# for i in range(0, len(X)):
-#     ds.addSample(X[i], y[i])
-
-# # nn && trainer construction
-# net = buildNetwork(ds.indim, (ds.indim + ds.outdim) / 2, ds.outdim, bias=True) # building the n
-# trainer = BackpropTrainer(net, ds, learningrate=0.01, momentum=0., verbose=True)
-# trainer.trainUntilConvergence(maxEpochs=1000) # Train, until convergence
+raw_input('waiting to close graph')

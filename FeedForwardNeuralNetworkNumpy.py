@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 
 class FeedForwardNeuralNetworkError(Exception):
     pass
@@ -19,6 +20,11 @@ def tanh(mtx, deriv=False):
     if deriv is True:
         return 1 - mtx * mtx
     return np.tanh(mtx)
+
+def update_error_plot(ax, fig, x, y):
+    ax.plot(x, y)
+    fig.canvas.draw()
+    
 
 class FeedForwardNN(object):
     """ A feed forward neural network"""
@@ -107,11 +113,20 @@ class FeedForwardNN(object):
             self._weights[idx] += delta
             self._layer_prevdelta[idx] = delta
 
-    def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99):
+    def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99, plot_error=False):
         """ Train the neural net with the backpropagation algorithm
         return final error """
 
         verbose_cycle = 0.01 * epoch
+
+        if plot_error:
+            error_history = []
+            epoch_history = []
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            update_error_plot(ax, fig, epoch_history, error_history)
+            fig.show()
+
         for epk in xrange(0, epoch):
             self.run(X)
             # for each layer output calculate distance to target
@@ -120,6 +135,11 @@ class FeedForwardNN(object):
             if verbose and (epk % verbose_cycle) == 0:
                 print >> sys.stderr, "Error:", str(error)
             
+            if plot_error and (epk % verbose_cycle) == 0:
+                error_history += [error]
+                epoch_history += [epk]
+                update_error_plot(ax, fig, epoch_history, error_history)
+
             # move the weights toward target with alpha step
             self._proceed_weights_step(alpha, deltas, X, momentum)
 
@@ -138,11 +158,20 @@ class FeedForwardNN(object):
             self._ms_delta_acc[idx] = p * self._ms_delta_acc[idx] + (1 - p) * (delta ** 2) # accumulate update
             self._weights[idx] -= delta
 
-    def adadelta_training(self, X, y, epoch=100, verbose=True):
+    def adadelta_training(self, X, y, epoch=100, verbose=True, plot_error=False):
         """ Train the neural net with the adadelta algorithm
         return final error """
 
         verbose_cycle = 0.01 * epoch
+
+        if plot_error:
+            error_history = []
+            epoch_history = []
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            update_error_plot(ax, fig, epoch_history, error_history)
+            fig.show()
+
         for epk in xrange(0, epoch):
             self.run(X)
             # for each layer output calculate distance to target
@@ -150,6 +179,10 @@ class FeedForwardNN(object):
 
             if verbose and (epk % verbose_cycle) == 0:
                 print >> sys.stderr, "Error:", str(error)
+            if plot_error and (epk % verbose_cycle) == 0:
+                error_history += [error]
+                epoch_history += [epk]
+                update_error_plot(ax, fig, epoch_history, error_history)                
             
             # move the weights toward target with alpha step
             self._proceed_weights_step_adadelta(deltas, X) # p stand for rho and e for epsilon
@@ -177,12 +210,13 @@ if __name__ == "__main__":
     print "ffnn._layers_count"
     print ffnn._layers_count
     print "ffnn.backpropagation_training(X, y)"
-    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=1000)
+    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=1000, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
 
     ffnn = FeedForwardNN([3, 4, 2])
     print "ffnn.adadelta_training(X, y)"
-    print ffnn.adadelta_training(X, y, epoch=1000)
+    print ffnn.adadelta_training(X, y, epoch=1000, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
+    raw_input('waiting to close graph')
