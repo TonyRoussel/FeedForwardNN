@@ -133,9 +133,11 @@ class FeedForwardNN(object):
         verbose_cycle = 0.01 * epoch
 
         if plot_error:
+            plot_name = "BPT_shape" + str(self._layers_shape) + "_epoch" + str(epoch) + "_alpha" + str(alpha) + "_mom" + str(momentum)
             error_history = []
             epoch_history = []
             fig = plt.figure()
+            fig.canvas.set_window_title(plot_name)
             update_error_plot(fig, epoch_history, error_history)
             fig.show()
 
@@ -177,9 +179,11 @@ class FeedForwardNN(object):
         verbose_cycle = 0.01 * epoch
 
         if plot_error:
+            plot_name = "ADAD_shape" + str(self._layers_shape) + "_epoch" + str(epoch)
             error_history = []
             epoch_history = []
             fig = plt.figure()
+            fig.canvas.set_window_title(plot_name)
             ax = fig.add_subplot(111)
             update_error_plot(fig, epoch_history, error_history)
             fig.show()
