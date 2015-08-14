@@ -29,7 +29,7 @@ def update_error_plot(fig, x, y):
     
 
 class FeedForwardNN(object):
-    """ A feed forward neural network"""
+    """ A feed forward neural network """
     
     def __init__(self, layers_shape, bias_unit=True, hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid"):
         """ initialisation of the ff neural network"""
@@ -43,6 +43,9 @@ class FeedForwardNN(object):
                             "tanh" : tanh}
 
         # save layers_types
+        self._hidden_layer_type = hidden_layer
+        self._output_layer_type = output_layer
+        self._input_layer_type = input_layer
         self._hidden_layer = self._layer_type[hidden_layer]
         self._output_layer = self._layer_type[output_layer]
         self._input_layer = self._layer_type[input_layer]
