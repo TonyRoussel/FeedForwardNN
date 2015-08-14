@@ -21,6 +21,13 @@ def tanh(mtx, deriv=False):
         return 1 - mtx * mtx
     return np.tanh(mtx)
 
+def softmax(mtx, deriv=False):
+    if deriv is True:
+        soft = softmax(mtx)
+        return soft * (1 - soft)
+    exp_mtx = np.exp(mtx)
+    return exp_mtx / np.sum(exp_mtx)
+
 def update_error_plot(fig, x, y):
     fig.clf()
     ax = fig.add_subplot(111)
@@ -40,7 +47,8 @@ class FeedForwardNN(object):
 
         # init layer types dictionnary
         self._layer_type = {"sigmoid" : sigmoid,
-                            "tanh" : tanh}
+                            "tanh" : tanh,
+                            "softmax" : softmax}
 
         # save layers_types
         self._hidden_layer_type = hidden_layer
@@ -204,11 +212,11 @@ if __name__ == "__main__":
                   [0, 1, 1],
                   [1, 0, 1],
                   [1, 1, 1]])
-    y = np.array([[0, 0],
-                  [1, 1],
+    y = np.array([[0, 1],
+                  [0, 1],
                   [1, 0],
-                  [0, 1]])
-    ffnn = FeedForwardNN([3, 4, 2])
+                  [1, 0]])
+    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
     print "ffnn._layers_shape"
     print ffnn._layers_shape
     print "ffnn._layers_count"
@@ -218,7 +226,7 @@ if __name__ == "__main__":
     print "ffnn.run(X)"
     print ffnn.run(X)
 
-    ffnn = FeedForwardNN([3, 4, 2])
+    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
     print "ffnn.adadelta_training(X, y)"
     print ffnn.adadelta_training(X, y, epoch=1000, plot_error=True)
     print "ffnn.run(X)"
