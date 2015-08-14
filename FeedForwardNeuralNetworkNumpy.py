@@ -21,7 +21,9 @@ def tanh(mtx, deriv=False):
         return 1 - mtx * mtx
     return np.tanh(mtx)
 
-def update_error_plot(ax, fig, x, y):
+def update_error_plot(fig, x, y):
+    fig.clf()
+    ax = fig.add_subplot(111)
     ax.plot(x, y)
     fig.canvas.draw()
     
@@ -123,8 +125,7 @@ class FeedForwardNN(object):
             error_history = []
             epoch_history = []
             fig = plt.figure()
-            ax = fig.add_subplot(111)
-            update_error_plot(ax, fig, epoch_history, error_history)
+            update_error_plot(fig, epoch_history, error_history)
             fig.show()
 
         for epk in xrange(0, epoch):
@@ -138,7 +139,7 @@ class FeedForwardNN(object):
             if plot_error and (epk % verbose_cycle) == 0:
                 error_history += [error]
                 epoch_history += [epk]
-                update_error_plot(ax, fig, epoch_history, error_history)
+                update_error_plot(fig, epoch_history, error_history)
 
             # move the weights toward target with alpha step
             self._proceed_weights_step(alpha, deltas, X, momentum)
@@ -169,7 +170,7 @@ class FeedForwardNN(object):
             epoch_history = []
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            update_error_plot(ax, fig, epoch_history, error_history)
+            update_error_plot(fig, epoch_history, error_history)
             fig.show()
 
         for epk in xrange(0, epoch):
@@ -182,7 +183,7 @@ class FeedForwardNN(object):
             if plot_error and (epk % verbose_cycle) == 0:
                 error_history += [error]
                 epoch_history += [epk]
-                update_error_plot(ax, fig, epoch_history, error_history)                
+                update_error_plot(fig, epoch_history, error_history)                
             
             # move the weights toward target with alpha step
             self._proceed_weights_step_adadelta(deltas, X) # p stand for rho and e for epsilon
