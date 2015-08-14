@@ -97,15 +97,15 @@ def normalize(mtx, norm):
 
 
 # X, y, d = read_training_data()
-# Xl, yl, d = read_training_data_one_of_n()
-Xl, yl, d = read_training_data_binary()
+Xl, yl, d = read_training_data_one_of_n()
+# Xl, yl, d = read_training_data_binary()
 
 # # crossvalidation data construction RANDOM PICK
 Xt = Xl
 yt = yl
 Xp = list()
 yp = list()
-for i in range(0, int(0.5 * len(Xl))):
+for i in range(0, int(0.3 * len(Xl))):
     popi = random.randint(0, len(Xl) - 1)
     Xp.append(Xl[popi])
     yp.append(yl[popi])
@@ -118,15 +118,16 @@ y = np.array(yt)
 Xp = np.array(Xp)
 yp = np.array(yp)
 # norm = normalizer(X)
-ffnn = FeedForwardNN([len(X[0]), (len(X[0]) + len(y[0])) / 2, len(y[0])], hidden_layer="sigmoid", output_layer="sigmoid", input_layer="sigmoid")
+ffnn = FeedForwardNN([len(X[0]), (len(X[0]) + len(y[0])) / 2, len(y[0])], hidden_layer="tanh", output_layer="softmax", input_layer="tanh")
 
 # ffnn.backpropagation_training(normalize(X, norm), y, alpha=0.00001, epoch=100, momentum=0.99, plot_error=True)
-# ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=16000, momentum=0.99, plot_error=True)
+# ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=2000, momentum=0.99, plot_error=True)
 # ffnn.adadelta_training(normalize(X, norm), y, epoch=100, plot_error=True)
-ffnn.adadelta_training(X, y, epoch=16000, plot_error=True)
+ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
 
 # prediction = ffnn.run(normalize(X, norm))
 prediction = ffnn.run(Xp)
+print prediction
 total = len(yp)
 count = 0
 for i in xrange(total):
