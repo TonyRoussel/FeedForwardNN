@@ -13,7 +13,8 @@ def remove_bias(mtx):
 
 def sigmoid(mtx, deriv=False):
     if deriv is True:
-        return mtx * (1 - mtx)
+        sig = sigmoid(mtx)
+        return sig * (1 - sig)
     return 1 / (1 + np.exp(-mtx))
 
 def tanh(mtx, deriv=False):
