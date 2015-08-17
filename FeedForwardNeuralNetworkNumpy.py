@@ -228,13 +228,13 @@ if __name__ == "__main__":
     print "ffnn._layers_count"
     print ffnn._layers_count
     print "ffnn.backpropagation_training(X, y)"
-    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=1000, plot_error=True)
+    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=500, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
 
     ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
     print "ffnn.adadelta_training(X, y)"
-    print ffnn.adadelta_training(X, y, epoch=1000, plot_error=True)
+    print ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
     raw_input('waiting to close graph')
