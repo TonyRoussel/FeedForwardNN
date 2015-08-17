@@ -106,11 +106,12 @@ class FeedForwardNN(object):
         """ Given the last outputs, calculate for each layer weights the distance to target """
 
         deltas = []
+        lambd = 0.1
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
-                l_error = y - output
-                glob_error = np.sum(l_error ** 2)
-                delta = l_error * self._output_layer(output, True)
+                l_error = (y - output) + (lambd / len(y)) * output
+                glob_error = np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output))) # np.mean(np.sum(l_error ** 2))
+                delta = l_error # * self._output_layer(output, True)
             else:
                 l_error = np.dot(deltas[-idx], self._weights[-idx].T)
                 if idx < self._layers_count - 1:
