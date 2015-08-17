@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import random
 import matplotlib.pyplot as plt
 
 class FeedForwardNeuralNetworkError(Exception):
@@ -164,6 +165,57 @@ class FeedForwardNN(object):
         # return last error
         return error
 
+    def SGD_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99, l_regularization=0.1, mini_batch_size=10, plot_error=False):
+        """ Train the neural net with the backpropagation algorithm
+        return final error """
+
+        verbose_cycle = 0.01 * epoch
+
+        if plot_error:
+            plot_name = "SGD_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_epoch" + str(epoch) + "_alpha" + str(alpha) + "_mom" + str(momentum) + "_batchsize" + str(mini_batch_size)
+            error_history = []
+            epoch_history = []
+            fig = plt.figure()
+            fig.canvas.set_window_title(plot_name)
+            update_error_plot(fig, epoch_history, error_history)
+            fig.show()
+        n = len(y)
+        for epk in xrange(0, epoch):
+            # randomize data
+            x_minibatches = []
+            y_minibatches = []
+            idx_shuffle = range(n)
+            random.shuffle(idx_shuffle)
+            for i in idx_shuffle:
+                x_minibatches.append(X[i])
+                y_minibatches.append(y[i])
+            # create minibatches
+            x_minibatches = [np.array(x_minibatches[k : k + mini_batch_size]) for k in xrange(0, n, mini_batch_size)]
+            y_minibatches = [np.array(y_minibatches[k : k + mini_batch_size]) for k in xrange(0, n, mini_batch_size)]
+            for idx, x_minibatch in enumerate(x_minibatches):
+                y_minibatch = y_minibatches[idx]
+                self.run(x_minibatch)
+                # for each layer output calculate distance to target
+                error, deltas = self._measure_deltas(y_minibatch, l_regularization)
+                # move the weights toward target with alpha step
+                self._proceed_weights_step(alpha, deltas, x_minibatch, momentum)
+
+            if verbose or plot_error:
+                self.run(X)
+                error = np.sum(np.nan_to_num(-y * np.log(self._layer_output[-1]) - (1 - y) * np.log(1 - self._layer_output[-1])))
+            if verbose and (epk % verbose_cycle) == 0:
+                print >> sys.stderr, "Error:", str(error)
+            if plot_error and (epk % verbose_cycle) == 0:
+                error_history += [error]
+                epoch_history += [epk]
+                update_error_plot(fig, epoch_history, error_history)
+
+        if verbose:
+            print >> sys.stderr, "Final error:", str(error)
+
+        # return last error
+        return error
+
     def _proceed_weights_step_adadelta(self, deltas, X, p=0.95, e=1e-6):
         """ given rho, epsilon parameter and previous gradient of each layer, move the weights """
         for idx in xrange(self._layers_count - 1):
@@ -226,14 +278,20 @@ if __name__ == "__main__":
     print ffnn._layers_shape
     print "ffnn._layers_count"
     print ffnn._layers_count
-    print "ffnn.backpropagation_training(X, y)"
-    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=500, plot_error=True)
-    print "ffnn.run(X)"
-    print ffnn.run(X)
+    # print "ffnn.backpropagation_training(X, y)"
+    # print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=500, plot_error=True)
+    # print "ffnn.run(X)"
+    # print ffnn.run(X)
+
+    # ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
+    # print "ffnn.adadelta_training(X, y)"
+    # print ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
+    # print "ffnn.run(X)"
+    # print ffnn.run(X)
 
     ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
-    print "ffnn.adadelta_training(X, y)"
-    print ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
+    print "ffnn.SGD_training(X, y, alpha=0.07, epoch=500, mini_batch_size=10, plot_error=True)"
+    print ffnn.SGD_training(X, y, alpha=0.07, epoch=500, mini_batch_size=10, momentum=0.3, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
     raw_input('waiting to close graph')
