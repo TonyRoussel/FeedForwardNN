@@ -34,7 +34,7 @@ def update_error_plot(fig, x, y):
     ax = fig.add_subplot(111)
     ax.plot(x, y)
     fig.canvas.draw()
-    
+ 
 
 class FeedForwardNN(object):
     """ A feed forward neural network """
@@ -102,14 +102,13 @@ class FeedForwardNN(object):
             self._layer_output.append(layer_output)
         return self._layer_output[-1]
 
-    def _measure_deltas(self, y):
+    def _measure_deltas(self, y, lambda_regularization):
         """ Given the last outputs, calculate for each layer weights the distance to target """
 
         deltas = []
-        lambd = 0.1
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
-                l_error = (y - output) + (lambd / len(y)) * output
+                l_error = (y - output) + (lambda_regularization / len(y)) * output
                 glob_error = np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output))) # np.mean(np.sum(l_error ** 2))
                 delta = l_error # * self._output_layer(output, True)
             else:
@@ -128,7 +127,7 @@ class FeedForwardNN(object):
             self._weights[idx] += delta
             self._layer_prevdelta[idx] = delta
 
-    def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99, plot_error=False):
+    def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99, l_regularization=0.1, plot_error=False):
         """ Train the neural net with the backpropagation algorithm
         return final error """
 
@@ -146,7 +145,7 @@ class FeedForwardNN(object):
         for epk in xrange(0, epoch):
             self.run(X)
             # for each layer output calculate distance to target
-            error, deltas = self._measure_deltas(y)
+            error, deltas = self._measure_deltas(y, l_regularization)
 
             if verbose and (epk % verbose_cycle) == 0:
                 print >> sys.stderr, "Error:", str(error)
@@ -174,7 +173,7 @@ class FeedForwardNN(object):
             self._ms_delta_acc[idx] = p * self._ms_delta_acc[idx] + (1 - p) * (delta ** 2) # accumulate update
             self._weights[idx] -= delta
 
-    def adadelta_training(self, X, y, epoch=100, verbose=True, plot_error=False):
+    def adadelta_training(self, X, y, epoch=100, verbose=True, l_regularization=0.1, plot_error=False):
         """ Train the neural net with the adadelta algorithm
         return final error """
 
@@ -193,7 +192,7 @@ class FeedForwardNN(object):
         for epk in xrange(0, epoch):
             self.run(X)
             # for each layer output calculate distance to target
-            error, deltas = self._measure_deltas(y)
+            error, deltas = self._measure_deltas(y, l_regularization)
 
             if verbose and (epk % verbose_cycle) == 0:
                 print >> sys.stderr, "Error:", str(error)
