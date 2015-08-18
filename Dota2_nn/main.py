@@ -127,6 +127,18 @@ ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=500, momentum=0.99, plot_e
 # ffnn.adadelta_training(X, y, epoch=10000, plot_error=True)
 
 # prediction = ffnn.run(normalize(X, norm))
+prediction = ffnn.run(X)
+print prediction
+total = len(y)
+count = 0
+for i in xrange(total):
+    indexp = max(enumerate(prediction[i]), key=operator.itemgetter(1))[0]
+    indexe = max(enumerate(y[i]), key=operator.itemgetter(1))[0]
+    if indexp == indexe:
+        count = count + 1
+print "Final rate on training set:", count / float(total)
+
+
 prediction = ffnn.run(Xp)
 print prediction
 total = len(yp)
@@ -136,6 +148,6 @@ for i in xrange(total):
     indexe = max(enumerate(yp[i]), key=operator.itemgetter(1))[0]
     if indexp == indexe:
         count = count + 1
-print "Final rate:", count / float(total)
+print "Final rate on validation set:", count / float(total)
 
 raw_input('waiting to close graph')
