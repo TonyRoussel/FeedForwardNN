@@ -182,13 +182,11 @@ class FeedForwardNN(object):
         n = len(y)
         for epk in xrange(0, epoch):
             # randomize data
-            x_minibatches = []
-            y_minibatches = []
-            idx_shuffle = range(n)
-            random.shuffle(idx_shuffle)
-            for i in idx_shuffle:
-                x_minibatches.append(X[i])
-                y_minibatches.append(y[i])
+            random_data = zip(X, y)
+            random.shuffle(random_data)
+            random_data = zip(*random_data)
+            x_minibatches = list(random_data[0])
+            y_minibatches = list(random_data[1])
             # create minibatches
             x_minibatches = [np.array(x_minibatches[k : k + mini_batch_size]) for k in xrange(0, n, mini_batch_size)]
             y_minibatches = [np.array(y_minibatches[k : k + mini_batch_size]) for k in xrange(0, n, mini_batch_size)]
