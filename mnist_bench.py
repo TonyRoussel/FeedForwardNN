@@ -44,12 +44,9 @@ images_test /= 255.
 # show()
 
 Xt, yt = convert_mnist_2d_1ToNOutput(images_training, labels_training)
-Xp, yp = convert_mnist_2d_1ToNOutput(images_test, labels_test)
 
 X = np.array(Xt)
 y = np.array(yt)
-Xp = np.array(Xp)
-yp = np.array(yp)
 
 ffnn = FeedForwardNN([len(X[0]), len(X[0]), len(y[0])], hidden_layer="sigmoid", output_layer="softmax", input_layer="sigmoid")
 
@@ -57,6 +54,9 @@ ffnn.backpropagation_training(X, y, alpha=1e-7, epoch=100, momentum=0.99, plot_e
 # ffnn.SGD_training(X, y, alpha=1e-7, epoch=5000, momentum=0.99, mini_batch_size=10, plot_error=True)
 # ffnn.adadelta_training(X, y, epoch=100, l_regularization=0.1, plot_error=True)
 
+Xp, yp = convert_mnist_2d_1ToNOutput(images_test, labels_test)
+Xp = np.array(Xp)
+yp = np.array(yp)
 
 prediction = ffnn.run(X)
 total = len(y)
