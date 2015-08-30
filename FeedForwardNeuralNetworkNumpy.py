@@ -273,23 +273,23 @@ if __name__ == "__main__":
                   [0, 1],
                   [1, 0],
                   [1, 0]])
-    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
+    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid")
     print "ffnn._layers_shape"
     print ffnn._layers_shape
     print "ffnn._layers_count"
     print ffnn._layers_count
-    # print "ffnn.backpropagation_training(X, y)"
-    # print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=500, plot_error=True)
-    # print "ffnn.run(X)"
-    # print ffnn.run(X)
+    print "ffnn.backpropagation_training(X, y)"
+    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=500, plot_error=True)
+    print "ffnn.run(X)"
+    print ffnn.run(X)
 
-    # ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
-    # print "ffnn.adadelta_training(X, y)"
-    # print ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
-    # print "ffnn.run(X)"
-    # print ffnn.run(X)
+    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid")
+    print "ffnn.adadelta_training(X, y)"
+    print ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
+    print "ffnn.run(X)"
+    print ffnn.run(X)
 
-    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="softmax")
+    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid")
     print "ffnn.SGD_training(X, y, alpha=0.07, epoch=500, mini_batch_size=10, plot_error=True)"
     print ffnn.SGD_training(X, y, alpha=0.07, epoch=500, mini_batch_size=10, momentum=0.3, plot_error=True)
     print "ffnn.run(X)"
