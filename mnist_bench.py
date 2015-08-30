@@ -30,13 +30,13 @@ images_training, labels_training = mnist_numpy.load_mnist('training')
 # print images.shape
 # print "labels.shapes"
 # print labels.shape
-# print "labels[0]"
-# print labels[0]
+# print "labels_training[0]"
+# print labels_training[0]
 # print "images[0].shape"
 # print images[0].shape
 # print "images[0].flatten().shape"
 # print images[0].flatten().shape
-# imshow(images.mean(axis=0), cmap=cm.gray)
+# imshow(images_training[0], cmap=cm.gray)
 # show()
 
 images_training /= 255.
