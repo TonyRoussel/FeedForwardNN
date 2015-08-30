@@ -109,11 +109,11 @@ class FeedForwardNN(object):
         deltas = []
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
-                l_error = (y - output) + (lambda_regularization / len(y)) * output
-                # glob_error = np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output))) # np.mean(np.sum(l_error ** 2))
-                glob_error = np.mean(np.sum(l_error ** 2))
-                # delta = l_error
-                delta = l_error * self._output_layer(output, True)
+                l_error = (output - y) + (lambda_regularization / len(y)) * output
+                glob_error = np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output)))
+                # glob_error = np.mean(np.sum(l_error ** 2))
+                delta = l_error
+                # delta = l_error * self._output_layer(output, True)
             else:
                 l_error = np.dot(deltas[-idx], self._weights[-idx].T)
                 if idx < self._layers_count - 1:
@@ -127,7 +127,7 @@ class FeedForwardNN(object):
         """ given an alpha step and the deltas of each layer, move the weights """
         for idx in xrange(self._layers_count - 1):
             delta = alpha * (np.dot(self._layer_input[idx].T, deltas[idx])) + momentum * self._layer_prevdelta[idx]
-            self._weights[idx] += delta
+            self._weights[idx] -= delta
             self._layer_prevdelta[idx] = delta
 
     def backpropagation_training(self, X, y, alpha=0.1, epoch=100, verbose=True, momentum=0.99, l_regularization=0.1, plot_error=False):
@@ -223,7 +223,7 @@ class FeedForwardNN(object):
             self._ms_grad_acc[idx] = p * self._ms_grad_acc[idx] + (1 - p) * (gradient ** 2) # accumulate gradient
             delta = - (np.sqrt(self._ms_delta_acc[idx] + e) / np.sqrt(self._ms_grad_acc[idx] + e)) * gradient # compute update
             self._ms_delta_acc[idx] = p * self._ms_delta_acc[idx] + (1 - p) * (delta ** 2) # accumulate update
-            self._weights[idx] -= delta
+            self._weights[idx] += delta
 
     def adadelta_training(self, X, y, epoch=100, verbose=True, l_regularization=0.1, plot_error=False):
         """ Train the neural net with the adadelta algorithm
