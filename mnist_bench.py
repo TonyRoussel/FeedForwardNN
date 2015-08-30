@@ -39,7 +39,7 @@ images_training, labels_training = mnist_numpy.load_mnist('training')
 # imshow(images_training[0], cmap=cm.gray)
 # show()
 
-images_training /= 255.
+# images_training /= 255.
 
 Xt, yt = convert_mnist_2d_1ToNOutput(images_training, labels_training)
 
@@ -53,7 +53,7 @@ ffnn.backpropagation_training(X, y, alpha=3, epoch=100, momentum=0., l_regulariz
 # ffnn.adadelta_training(X, y, epoch=100, l_regularization=0, plot_error=True)
 
 images_test, labels_test = mnist_numpy.load_mnist('testing')
-images_test /= 255.
+# images_test /= 255.
 Xp, yp = convert_mnist_2d_1ToNOutput(images_test, labels_test)
 Xp = np.array(Xp)
 yp = np.array(yp)
