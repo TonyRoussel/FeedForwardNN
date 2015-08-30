@@ -20,7 +20,7 @@ def convert_mnist_2d_1ToNOutput(imgs, labels):
     X = list()
     y = list()
     for idx, img in enumerate(imgs):
-        X.append(list(img.flatten()))
+        X.append([float(x) for x in list(img.flatten())])
         y.append(output_map[labels[idx][0] - 1])
     return X, y
 
