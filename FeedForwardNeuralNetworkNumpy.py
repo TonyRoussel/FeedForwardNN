@@ -35,12 +35,38 @@ def update_error_plot(fig, x, y):
     ax = fig.add_subplot(111)
     ax.plot(x, y)
     fig.canvas.draw()
- 
+
+
+class MeanSquaredError(object):
+
+    @staticmethod
+    def error(y, output):
+        return np.mean(np.sum((output - y) ** 2))
+
+    @staticmethod
+    def error_deriv(y, output, output_deriv, reg_term):
+        return ((output - y) + reg_term) * output_deriv
+
+
+class CrossEntropyError(object):
+
+    @staticmethod
+    def error(y, output):
+        return np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output)))
+
+    @staticmethod
+    def error_deriv(y, output, output_deriv, reg_term):
+        return (output - y) + reg_term
+
+
+class FeedForwardNeuralNetworkError(Exception):
+    pass
+
 
 class FeedForwardNN(object):
     """ A feed forward neural network """
     
-    def __init__(self, layers_shape, bias_unit=True, hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid"):
+    def __init__(self, layers_shape, bias_unit=True, hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid", cost="cee"):
         """ initialisation of the ff neural network"""
 
         # check minimum layer shape
@@ -81,6 +107,11 @@ class FeedForwardNN(object):
             self._ms_grad_acc.append(np.zeros((s_in + bias_unit, s_out)))
             self._ms_delta_acc.append(np.zeros((s_in + bias_unit, s_out)))
 
+        # init the cost function
+        cost_map = {"cee" : CrossEntropyError,
+                    "mse" : MeanSquaredError}
+        self._cost = cost_map[cost]
+
     def run(self, X):
         """Run the neural net against data row """
         # reset layer input/output memory
@@ -109,10 +140,14 @@ class FeedForwardNN(object):
         deltas = []
         for idx, output in enumerate(reversed(self._layer_output)):
             if idx == 0:
-                l_error = (output - y) + (lambda_regularization / len(y)) * output
-                glob_error = np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output)))
+                glob_error = self._cost.error(y, output)
+                regularization_term = (lambda_regularization / len(y)) * output
+                delta = self._cost.error_deriv(y, output, None if self._cost is CrossEntropyError else self._output_layer(output, True), regularization_term)
+
+                # l_error = (output - y) + (lambda_regularization / len(y)) * output
+                # glob_error = np.sum(np.nan_to_num(-y * np.log(output) - (1 - y) * np.log(1 - output)))
                 # glob_error = np.mean(np.sum(l_error ** 2))
-                delta = l_error
+                # delta = l_error
                 # delta = l_error * self._output_layer(output, True)
             else:
                 l_error = np.dot(deltas[-idx], self._weights[-idx].T)
