@@ -3,14 +3,14 @@ import sys
 import random
 import matplotlib.pyplot as plt
 
-class FeedForwardNeuralNetworkError(Exception):
-    pass
 
 def append_bias(mtx):
     return np.insert(mtx, 0, 1, axis=1)
 
+
 def remove_bias(mtx):
     return np.delete(mtx, 0, axis=1)
+
 
 def sigmoid(mtx, deriv=False):
     if deriv is True:
@@ -18,10 +18,12 @@ def sigmoid(mtx, deriv=False):
         return sig * (1 - sig)
     return 1 / (1 + np.exp(-mtx))
 
+
 def tanh(mtx, deriv=False):
     if deriv is True:
         return 1 - mtx * mtx
     return np.tanh(mtx)
+
 
 def softmax(mtx, deriv=False):
     if deriv is True:
@@ -29,6 +31,7 @@ def softmax(mtx, deriv=False):
         return soft * (1 - soft)
     exp_mtx = np.exp(mtx)
     return exp_mtx / np.sum(exp_mtx)
+
 
 def update_error_plot(fig, x, y):
     fig.clf()
@@ -308,25 +311,25 @@ if __name__ == "__main__":
                   [0, 1],
                   [1, 0],
                   [1, 0]])
-    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid")
+    ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid", cost="mse")
     print "ffnn._layers_shape"
     print ffnn._layers_shape
     print "ffnn._layers_count"
     print ffnn._layers_count
     print "ffnn.backpropagation_training(X, y)"
-    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=500, plot_error=True)
+    print ffnn.backpropagation_training(X, y, alpha=0.07, epoch=100, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
 
     ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid")
     print "ffnn.adadelta_training(X, y)"
-    print ffnn.adadelta_training(X, y, epoch=500, plot_error=True)
+    print ffnn.adadelta_training(X, y, epoch=100, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
 
     ffnn = FeedForwardNN([3, 2, 2], hidden_layer="sigmoid", input_layer="sigmoid", output_layer="sigmoid")
     print "ffnn.SGD_training(X, y, alpha=0.07, epoch=500, mini_batch_size=10, plot_error=True)"
-    print ffnn.SGD_training(X, y, alpha=0.07, epoch=500, mini_batch_size=10, momentum=0.3, plot_error=True)
+    print ffnn.SGD_training(X, y, alpha=0.07, epoch=100, mini_batch_size=10, momentum=0.3, plot_error=True)
     print "ffnn.run(X)"
     print ffnn.run(X)
     raw_input('waiting to close graph')
