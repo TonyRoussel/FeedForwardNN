@@ -50,6 +50,9 @@ class MeanSquaredError(object):
     def error_deriv(y, output, output_deriv, reg_term):
         return ((output - y) + reg_term) * output_deriv
 
+    @staticmethod
+    def tostring():
+        return "MSE"
 
 class CrossEntropyError(object):
 
@@ -61,6 +64,9 @@ class CrossEntropyError(object):
     def error_deriv(y, output, output_deriv, reg_term):
         return (output - y) + reg_term
 
+    @staticmethod
+    def tostring():
+        return "CEE"
 
 class FeedForwardNeuralNetworkError(Exception):
     pass
@@ -175,7 +181,7 @@ class FeedForwardNN(object):
         verbose_cycle = 0.01 * epoch
 
         if plot_error:
-            plot_name = "BPT_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_epoch" + str(epoch) + "_alpha" + str(alpha) + "_mom" + str(momentum) + "_lregu" + str(l_regularization)
+            plot_name = "BPT_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_cost" + self._cost.tostring() +"_epoch" + str(epoch) + "_alpha" + str(alpha) + "_mom" + str(momentum) + "_lregu" + str(l_regularization)
             error_history = []
             epoch_history = []
             fig = plt.figure()
@@ -212,7 +218,7 @@ class FeedForwardNN(object):
         verbose_cycle = 0.01 * epoch
 
         if plot_error:
-            plot_name = "SGD_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_epoch" + str(epoch) + "_alpha" + str(alpha) + "_mom" + str(momentum) + "_lregu" + str(l_regularization) + "_batchsize" + str(mini_batch_size)
+            plot_name = "SGD_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_cost" + self._cost.tostring() + "_epoch" + str(epoch) + "_alpha" + str(alpha) + "_mom" + str(momentum) + "_lregu" + str(l_regularization) + "_batchsize" + str(mini_batch_size)
             error_history = []
             epoch_history = []
             fig = plt.figure()
@@ -270,7 +276,7 @@ class FeedForwardNN(object):
         verbose_cycle = 0.01 * epoch
 
         if plot_error:
-            plot_name = "ADAD_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_epoch" + str(epoch) + "_lregu" + str(l_regularization)
+            plot_name = "ADAD_shape" + str(self._layers_shape) + "_types|" + self._input_layer_type + "|" + self._hidden_layer_type + "|" + self._output_layer_type + "_cost" + self._cost.tostring() +"_epoch" + str(epoch) + "_lregu" + str(l_regularization)
             error_history = []
             epoch_history = []
             fig = plt.figure()
